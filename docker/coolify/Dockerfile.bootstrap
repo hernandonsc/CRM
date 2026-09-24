@@ -1,0 +1,6 @@
+FROM postgres:17-alpine
+RUN apk add --no-cache curl jq
+COPY supabase/baseline.sql /opt/deskcomm/baseline.sql
+COPY docker/coolify/bootstrap.sh /opt/deskcomm/bootstrap.sh
+RUN chmod 755 /opt/deskcomm/bootstrap.sh
+ENTRYPOINT ["/opt/deskcomm/bootstrap.sh"]

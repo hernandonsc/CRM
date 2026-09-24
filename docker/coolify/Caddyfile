@@ -1,0 +1,22 @@
+:8080 {
+    encode gzip
+
+    # route preserva a ordem: o 403 precisa vir antes do proxy geral.
+    route {
+        @waha_global path /api/v1/webhooks/waha
+        respond @waha_global 403
+
+        @agentrun path /api/internal/agents/run*
+        reverse_proxy @agentrun app:3000 {
+            header_up X-Forwarded-Proto https
+            transport http {
+                read_timeout 320s
+                write_timeout 320s
+            }
+        }
+
+        reverse_proxy app:3000 {
+            header_up X-Forwarded-Proto https
+        }
+    }
+}
